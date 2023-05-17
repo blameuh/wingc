@@ -24,6 +24,7 @@
       border-radius: 5px;
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     .form h2 {
@@ -63,10 +64,13 @@
     }
 
     .result {
-      margin-top: 20px;
-      padding: 10px;
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
       border-radius: 5px;
-      background-color: #f4f4f4;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     .result h3 {
@@ -78,9 +82,8 @@
       margin: 0;
     }
 
-    @media (max-width: 600px) {
+    @media screen and (max-width: 600px) {
       .form {
-        width: 100%;
         padding: 20px;
       }
     }
@@ -89,7 +92,7 @@
 <body>
   <div class="container">
     <div class="form">
-      <h2>Test Form</h2>
+      <h2>Simple Form</h2>
       <form id="myForm">
         <input type="text" id="name" placeholder="Enter your name">
         <input type="text" id="email" placeholder="Enter your email">
@@ -116,4 +119,4 @@
     });
   </script>
 </body>
-</html>
+</html
