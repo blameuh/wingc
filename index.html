@@ -33,6 +33,18 @@
       color: #333;
     }
 
+
+    label {
+        width: 100%;
+        text-align: right;
+        margin-right: 10px; 
+    }
+
+    .form-group {
+    display: flex;
+    align-items: center;
+    }
+
     .form input[type="text"] {
       width: 100%;
       padding: 10px;
@@ -43,6 +55,20 @@
     }
 
     .form input[type="text"]:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
+    .form input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form input[type="number"]:focus {
       border-color: #4CAF50;
       outline: none;
     }
@@ -92,11 +118,13 @@
 <body>
   <div class="container">
     <div class="form">
-      <h2>Simple Form</h2>
+      <h2>Wing Chun Exercise Generator</h2>
       <form id="myForm">
-        <input type="text" id="name" placeholder="Enter your name">
-        <input type="text" id="email" placeholder="Enter your email">
-        <button type="submit">Submit</button>
+        <div class="form-group">
+            <label for="nbmvt">Number of mouvements:</label>
+            <input type="number" id="nbmvt" placeholder="Number of mouvements" value = 3>
+        </div>
+        <button type="submit">Generate</button>
       </form>
     </div>
   </div>
@@ -109,14 +137,48 @@
   </div>
 
   <script>
-    // JavaScript code to handle form submission and display result
+
+    var techstr = `[
+        { "name": "Pock", "type": "yang"},
+        { "name": "Boang", "type": "yang"},
+        { "name": "Jom", "type": "yang"},
+        { "name": "Fook", "type": "yang"},
+        { "name": "Gum", "type": "yang"},
+        { "name": "Tan", "type": "yin"},
+        { "name": "Woo", "type": "yin"},
+        { "name": "Gahng", "type": "yin"},
+        { "name": "Huen", "type": "yin"},
+        { "name": "Lop", "type": "yin"},
+        { "name": "Fon", "type": "yin"},
+        { "name": "Loy Jut", "type": "yin"},
+        { "name": "Lon", "type": "yin"}
+    ]`;
+
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max+1);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
     document.getElementById("myForm").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent form submission
-      var name = document.getElementById("name").value;
-      var email = document.getElementById("email").value;
-      var result = "Name: " + name + "<br>Email: " + email;
-      document.getElementById("result").innerHTML = result;
+        event.preventDefault();
+        
+        var techs = JSON.parse(techstr);
+        var nbmvt = document.getElementById("nbmvt").value;
+
+        var res = "<ul>";
+        for (i=0; i<nbmvt; i++) {
+            var n = getRandomInt(0, techs.length-1);
+            var tech = techs[n];
+            res += "<li>"+tech.name+"</li>";
+            prevTech = tech;
+        }
+        res += "</ul>";
+        
+        document.getElementById("result").innerHTML = res;
     });
+
   </script>
 </body>
-</html
+</html>
