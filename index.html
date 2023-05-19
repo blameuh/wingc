@@ -144,10 +144,13 @@
         { "name": "Jom", "type": "yang"},
         { "name": "Fook", "type": "yang"},
         { "name": "Gum", "type": "yang"},
+
         { "name": "Tan", "type": "yin"},
         { "name": "Woo", "type": "yin"},
         { "name": "Gahng", "type": "yin"},
         { "name": "Huen", "type": "yin"},
+        { "name": "Hang", "type": "yin"},
+        { "name": "Noy Jut", "type": "yin"},
         { "name": "Lop", "type": "yin"},
         { "name": "Fon", "type": "yin"},
         { "name": "Loy Jut", "type": "yin"},
@@ -161,19 +164,37 @@
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
+
+    function getRandomTech(techs, type) {
+      do {
+        var n = getRandomInt(0, techs.length-1);
+        if (techs[n].type === type)
+          return techs[n]
+      } while (1)
+    }
+
     document.getElementById("myForm").addEventListener("submit", function(event) {
         event.preventDefault();
         
         var techs = JSON.parse(techstr);
         var nbmvt = document.getElementById("nbmvt").value;
 
-        var res = "<ul>";
+        var exrc = [];
+        var type = (getRandomInt(0,1)===1)? 'yang': 'yin';
+        console.log("begin with "+type);
+
         for (i=0; i<nbmvt; i++) {
-            var n = getRandomInt(0, techs.length-1);
-            var tech = techs[n];
-            res += "<li>"+tech.name+"</li>";
+            var tech = getRandomTech(techs, type);
+            exrc.push(tech);
+            console.log(tech.name);
             prevTech = tech;
+            type = (type === 'yang')? 'yin': 'yang';
         }
+
+        var res = "<ul>";
+        exrc.forEach(function(item) {
+          res += "<li>"+item.name+" "+item.type+"</li>";
+        });
         res += "</ul>";
         
         document.getElementById("result").innerHTML = res;
