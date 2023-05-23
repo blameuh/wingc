@@ -11,6 +11,14 @@
       padding: 0;
     }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+      padding-bottom: 40px;
+    }
+
+
     .container {
       display: flex;
       justify-content: center;
@@ -25,7 +33,8 @@
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
-    }
+      transition: max-height 0.3s ease;
+   }
 
     .form h2 {
       text-align: center;
@@ -35,7 +44,7 @@
 
 
     label {
-        width: 100%;
+        display: block;
         text-align: right;
         margin-right: 10px; 
     }
@@ -45,7 +54,21 @@
     align-items: center;
     }
 
-    .form input[type="text"] {
+    .form input[type="checkbox"]  {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+
+    .form input[type="text"]  {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
@@ -60,7 +83,7 @@
     }
 
     .form input[type="number"] {
-      width: 100%;
+      width: 50%;
       padding: 10px;
       margin-bottom: 10px;
       border: 1px solid #ccc;
@@ -108,6 +131,14 @@
       margin: 0;
     }
 
+    .form .panel {
+      display: none;
+    }
+
+    .form .panel.show {
+      display: block;
+    }
+
     @media screen and (max-width: 600px) {
       .form {
         padding: 20px;
@@ -116,18 +147,29 @@
   </style>
 </head>
 <body>
+  <h1>Wing Chun Exercise Generator</h1>
+
   <div class="container">
     <div class="form">
-      <h2>Wing Chun Exercise Generator</h2>
+      <h2>Enchaînement</h2>
       <form id="myForm">
         <div class="form-group">
-            <label for="nbmvt">Number of mouvements:</label>
-            <input type="number" id="nbmvt" placeholder="Number of mouvements" value = 3>
+          <label for="ckbCustomize">
+            <input type="checkbox" id="ckbCustomize" onchange="toggleTextField()" value = 0 />
+            Personnaliser
+          </label>
+        </div>
+        <div class="panel">
+          <div class="form-group">
+              <label for="nbmvt">Nb mouvements:</label>
+              <input type="number" id="nbmvt" placeholder="Number of mouvements" value = 3>
+          </div>
         </div>
         <button type="submit">Generate</button>
       </form>
     </div>
   </div>
+
 
   <div class="container">
     <div class="result">
@@ -151,8 +193,7 @@
         { "name": "Huen", "type": "yin"},
         { "name": "Hang", "type": "yin"},
         { "name": "Noy Jut", "type": "yin"},
-        { "name": "Lop", "type": "yin"},
-        { "name": "Fon", "type": "yin"},
+        { "name": "Lop/Fon", "type": "yin"},
         { "name": "Loy Jut", "type": "yin"},
         { "name": "Lon", "type": "yin"}
     ]`;
@@ -165,6 +206,11 @@
     }
 
 
+    function getOtherType(type) {
+      return (type === 'yang')? 'yin': 'yang';
+    }
+
+
     function getRandomTech(techs, type) {
       do {
         var n = getRandomInt(0, techs.length-1);
@@ -173,32 +219,64 @@
       } while (1)
     }
 
-    document.getElementById("myForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        var techs = JSON.parse(techstr);
-        var nbmvt = document.getElementById("nbmvt").value;
 
-        var exrc = [];
-        var type = (getRandomInt(0,1)===1)? 'yang': 'yin';
-        console.log("begin with "+type);
-
-        for (i=0; i<nbmvt; i++) {
-            var tech = getRandomTech(techs, type);
-            exrc.push(tech);
-            console.log(tech.name);
-            prevTech = tech;
-            type = (type === 'yang')? 'yin': 'yang';
-        }
-
-        var res = "<ul>";
+    function buildResult(exrc) {
+      var res = "<ul>";
         exrc.forEach(function(item) {
-          res += "<li>"+item.name+" "+item.type+"</li>";
+          res += "<li>"+item.name+"</li>";
         });
         res += "</ul>";
+        return res;
+    }
+
+
+
+    function buildMvtList(custom, nbmvt) {
+      console.log("cust=" + custom+" mvt="+nbmvt)
+      var techs = JSON.parse(techstr);
+      var type;
+      
+      if (custom == 0) {
+        type = 'yang';
+        nbmvt = 2
+      } else {
+        type = (getRandomInt(0,1)===1)? 'yang': 'yin';
+      }
+
+      console.log("type="+type)
+      
+      var exrc = [];
+      for (i=0; i<nbmvt; i++) {
+          var tech = getRandomTech(techs, type);
+          exrc.push(tech);
+          console.log(tech.name);
+          lastTech = tech;
+          type = getOtherType(type);
+      }
+      return buildResult(exrc);
+
+    }
+
+
+    function toggleTextField() {
+      var ckbCustomize = document.getElementById("ckbCustomize");
+      var panel = document.querySelector(".panel");
+      
+      if (ckbCustomize.checked) {
+        panel.classList.add("show");
+      } else {
+        panel.classList.remove("show");
+      }
+    }
+
+    document.getElementById("myForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        var nbmvt = document.getElementById("nbmvt").value;
+        var custom = document.getElementById("ckbCustomize").checked;
         
-        document.getElementById("result").innerHTML = res;
+        document.getElementById("result").innerHTML = buildMvtList(custom, nbmvt);
     });
+
 
   </script>
 </body>
